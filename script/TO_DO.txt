@@ -1,0 +1,4 @@
+2019-07-08 05:59 
+1#Issiaiskinti kaip ikelt obj arba gltf/glb
+2# Issiaiskinti localhost
+3# pirmas funckijas pasirasyti
