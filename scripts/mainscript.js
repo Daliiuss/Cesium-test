@@ -48,9 +48,29 @@ var screenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.ca
     var yPosition = e.clientY;
 }
 */
+function Path_point(typ, x, y, alt) {
+  this.type = typ;
+  this.xcoord = x;
+  this.ycoord = y;
+  this.altitude = alt;
+}
 
-var points_array = [];
-    function fix_coordinate(clickPosition) {
+var path = [];
+
+var ptyp = "";
+var altitude=100;
+var pathstarted = 0;
+//fixing coordinates
+    function add_coordinate(x,y,path,altitude) {
+        if (pathstarted === 0) {
+            ptyp = "Starting point";
+            pathstarted+=1;
+        }
+        else {
+            ptyp = "checkpoint "+pathstarted++;}
+
+        path = path.concat(new Path_point(ptyp,x,y,altitude));
+        console.log(path[0].type);
 
 
    }
@@ -67,16 +87,31 @@ var points_array = [];
 
    }
 
+var ellipsoid = viewer.scene.globe.ellipsoid;
 //get click position
 screenSpaceEventHandler.setInputAction(function(click) {
 // get position  of click
     var clickPosition = viewer.camera.pickEllipsoid(click.position);
+    var cartographic = ellipsoid.cartesianToCartographic(clickPosition);
+    var longitudeString = Cesium.Math.toDegrees(cartographic.longitude);
+    var latitudeString = Cesium.Math.toDegrees(cartographic.latitude);
     //print to console
     console.log(clickPosition);
+    console.log(latitudeString);
+    console.log(longitudeString);
     addPoint(clickPosition);
-    points_array += clickPosition;
-    console.log(points_array.length);
+    add_coordinate(longitudeString,latitudeString,path);
+    //console.log(points_array.length);
 
 
 },
  Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+
+
+
+
+
+
+
+                                       

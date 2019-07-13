@@ -2,13 +2,12 @@ var screenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.ca
 
 // Function to add a point at the mouse position
 function addPoint(position) {
-point = viewer.entities.add({
+  point = viewer.entities.add({
     position: position,
     point: {
         pixelSize: 5,
-        color: Cesium.Color.RED
-    }
-});
+        color: Cesium.Color.RED}
+      });
 };
 
 // Event handler for left click
@@ -58,7 +57,7 @@ screenSpaceEventHandler.setInputAction(function(movement) {
     var y = Cesium.Math.toDegrees(cartographicClick.latitude);
     lineArray.push(x);
     lineArray.push(y);
-                
+
                 // use callback property to get cartesian coordinates for the line; if there is an existing line remove it, store in varible
     var linePosition = new Cesium.CallbackProperty(function(time, result) {
         if (typeof tempLine !== 'undefined') {
@@ -75,13 +74,10 @@ screenSpaceEventHandler.setInputAction(function(movement) {
             material: Cesium.Color.RED
         }
     });
-
                 // Event handler for second click; draw line with position from variable linePosition
     screenSpaceEventHandler.setInputAction(function(click) {
-
                         // get position  of click
                         var clickPosition = viewer.camera.pickEllipsoid(click.position);
-
                         // add point at  click position
                         addPoint(clickPosition);
 
@@ -92,10 +88,6 @@ screenSpaceEventHandler.setInputAction(function(movement) {
                 material: Cesium.Color.RED
             }
         });
-
-
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
 }, Cesium.ScreenSpaceEventType.MOUSE_MOVE, );
-
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
