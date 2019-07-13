@@ -8,7 +8,7 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
 function createModel(url, height) {
     viewer.entities.removeAll();
 
-    var position = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, height);
+    var position = Cesium.Cartesian3.fromDegrees(55.88, 21.23, height);
     var heading = Cesium.Math.toRadians(135);
     var pitch = 0;
     var roll = 0;
@@ -29,4 +29,11 @@ function createModel(url, height) {
         viewer.trackedEntity = entity;
     }
 
-        createModel('../../SampleData/models/Car/Car.gltf', 0.0);
+var options = [
+    {text : '---'},
+    { text : 'Car',
+      onselect : function() {createModel('../../SampleData/models/Car/Car.gltf', 0.0);}
+    }
+  ];
+
+Sandcastle.addToolbarMenu(options);
