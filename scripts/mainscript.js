@@ -31,6 +31,13 @@ function createModel(url, height) {
         viewer.trackedEntity = entity;
     }
 
+function movethroughpath(path)
+{
+
+
+
+}
+
 //Option bar
 var options = [
     {text : '---'},
@@ -80,14 +87,17 @@ var pathstarted = 0;
        var point = viewer.entities.add({
            position: clickPosition,
            point: {
-               pixelSize: 10,
-               color: Cesium.Color.RED
+               pixelSize : 8,
+                color : Cesium.Color.TRANSPARENT,
+                outlineColor : Cesium.Color.YELLOW,
+                outlineWidth : 3
            }
        });
 
    }
 
 var ellipsoid = viewer.scene.globe.ellipsoid;
+
 //get click position
 screenSpaceEventHandler.setInputAction(function(click) {
 // get position  of click
@@ -105,12 +115,15 @@ screenSpaceEventHandler.setInputAction(function(click) {
 
 
 },
- Cesium.ScreenSpaceEventType.LEFT_CLICK);
+ Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK );
 
+screenSpaceEventHandler.setInputAction(function(click){
+    var clickPosition = viewer.camera.pickEllipsoid(click.position);
+    var cartographic = ellipsoid.cartesianToCartographic(clickPosition);
+    var longitudeString = Cesium.Math.toDegrees(cartographic.longitude);
+    var latitudeString = Cesium.Math.toDegrees(cartographic.latitude);
 
-
-
-
+},Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 
 
 
