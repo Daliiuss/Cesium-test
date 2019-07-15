@@ -5,11 +5,13 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
     shouldAnimate : true
 });
 
+//TODO: Setup new project!!!
+//TODO: assign model to path!
 
-// Add model
+
+// Add model from SampleData
 function createModel(url, height) {
     viewer.entities.removeAll();
-
     var position = Cesium.Cartesian3.fromDegrees(55.88, 21.23, height);
     var heading = Cesium.Math.toRadians(135);
     var pitch = 0;
@@ -30,15 +32,8 @@ function createModel(url, height) {
         });
         viewer.trackedEntity = entity;
     }
-
-function movethroughpath(path)
-{
-
-
-
-}
-
 //Option bar
+//TODO: Rename
 var options = [
     {text : '---'},
     { text : 'Car',
@@ -49,12 +44,7 @@ Sandcastle.addToolbarMenu(options);
 
 var screenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 
-//Get position
-/*function getClickPosition(e) {
-    var xPosition = e.clientX;
-    var yPosition = e.clientY;
-}
-*/
+//Path_point obj constructor
 function Path_point(typ, x, y, alt) {
   this.type = typ;
   this.xcoord = x;
@@ -62,69 +52,80 @@ function Path_point(typ, x, y, alt) {
   this.altitude = alt;
 }
 
+//Holds all Path_points
+//TODO: create array for viewer coordinates
 var path = [];
 
+
+//TODO too much variables!
 var ptyp = "";
 var altitude=100;
 var pathstarted = 0;
-//fixing coordinates
-    function add_coordinate(x,y,path,altitude) {
-        if (pathstarted === 0) {
+var endFlag = 0;
+
+//Creating coordinates x/y
+//TODO: Switch case scenario
+//TODO: Call addPoint from here
+    function add_coordinate(clickPosition, path,altitude,flag) {
+        var cartographic = ellipsoid.cartesianToCartographic(clickPosition);
+        var x = Cesium.Math.toDegrees(cartographic.longitude);
+        var y = Cesium.Math.toDegrees(cartographic.latitude);
+        if (flag === true){
+            ptyp = "End point";
+        }
+        else if (pathstarted === 0) {
             ptyp = "Starting point";
             pathstarted+=1;
         }
         else {
-            ptyp = "checkpoint "+pathstarted++;}
+            ptyp = "Checkpoint "+pathstarted++;}
 
         path = path.concat(new Path_point(ptyp,x,y,altitude));
         console.log(path[0].type);
-
-
    }
 
-// Function to add a point at the mouse position
-   function addPoint(clickPosition) {
+//Adds point to viewer
+  function addPoint(clickPosition, psize, pcolor, pocolor, powith) {
        var point = viewer.entities.add({
            position: clickPosition,
            point: {
-               pixelSize : 8,
-                color : Cesium.Color.TRANSPARENT,
-                outlineColor : Cesium.Color.YELLOW,
-                outlineWidth : 3
+               pixelSize : psize,
+                color : pcolor,
+                outlineColor : pocolor,
+                outlineWidth : powith
            }
        });
 
    }
 
+
+//Elipsoid variable for getting coordinates
 var ellipsoid = viewer.scene.globe.ellipsoid;
 
-//get click position
+//get left click position
 screenSpaceEventHandler.setInputAction(function(click) {
 // get position  of click
-    var clickPosition = viewer.camera.pickEllipsoid(click.position);
-    var cartographic = ellipsoid.cartesianToCartographic(clickPosition);
-    var longitudeString = Cesium.Math.toDegrees(cartographic.longitude);
-    var latitudeString = Cesium.Math.toDegrees(cartographic.latitude);
-    //print to console
-    console.log(clickPosition);
-    console.log(latitudeString);
-    console.log(longitudeString);
-    addPoint(clickPosition);
-    add_coordinate(longitudeString,latitudeString,path);
-    //console.log(points_array.length);
+    var lclickPosition = viewer.camera.pickEllipsoid(click.position);
+    if (endFlag===0){
+    addPoint(lclickPosition, 8, Cesium.Color.TRANSPARENT, Cesium.Color.YELLOW, 3);
+        add_coordinate(lclickPosition, path, 100, 0);}
+    else
+    {console.log("End point has been already set");}
 
 
 },
  Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK );
 
+//get right click position
+//Todo: assign labels
 screenSpaceEventHandler.setInputAction(function(click){
-    var clickPosition = viewer.camera.pickEllipsoid(click.position);
-    var cartographic = ellipsoid.cartesianToCartographic(clickPosition);
-    var longitudeString = Cesium.Math.toDegrees(cartographic.longitude);
-    var latitudeString = Cesium.Math.toDegrees(cartographic.latitude);
-
+    if(endFlag === 0)
+    {var rclickPosition = viewer.camera.pickEllipsoid(click.position);
+        var cartographic = ellipsoid.cartesianToCartographic(rclickPosition);
+        addPoint(rclickPosition, 8, Cesium.Color.RED, Cesium.Color.YELLOW, 3);
+     add_coordinate(rclickPosition, path, 100, 1);
+    endFlag=1;
+    }
+    else
+        {console.log("End point already set");}
 },Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-
-
-
-                                       
