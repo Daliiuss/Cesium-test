@@ -66,11 +66,11 @@ var endFlag = 0;
 //Creating coordinates x/y
 //TODO: Switch case scenario
 //TODO: Call addPoint from here
-    function add_coordinate(clickPosition, path,altitude,flag) {
+    function add_coordinate(clickPosition, path,altitude) {
         var cartographic = ellipsoid.cartesianToCartographic(clickPosition);
         var x = Cesium.Math.toDegrees(cartographic.longitude);
         var y = Cesium.Math.toDegrees(cartographic.latitude);
-        if (flag === true){
+        if (endFlag === 1){
             ptyp = "End point";
         }
         else if (pathstarted === 0) {
@@ -108,7 +108,7 @@ screenSpaceEventHandler.setInputAction(function(click) {
     var lclickPosition = viewer.camera.pickEllipsoid(click.position);
     if (endFlag===0){
     addPoint(lclickPosition, 8, Cesium.Color.TRANSPARENT, Cesium.Color.YELLOW, 3);
-        add_coordinate(lclickPosition, path, 100, 0);}
+        add_coordinate(lclickPosition, path, 100);}
     else
     {console.log("End point has been already set");}
 
@@ -121,11 +121,12 @@ screenSpaceEventHandler.setInputAction(function(click) {
 screenSpaceEventHandler.setInputAction(function(click){
     if(endFlag === 0)
     {var rclickPosition = viewer.camera.pickEllipsoid(click.position);
-        var cartographic = ellipsoid.cartesianToCartographic(rclickPosition);
-        addPoint(rclickPosition, 8, Cesium.Color.RED, Cesium.Color.YELLOW, 3);
-     add_coordinate(rclickPosition, path, 100, 1);
-    endFlag=1;
+     endFlag=1;
+     var cartographic = ellipsoid.cartesianToCartographic(rclickPosition);
+     addPoint(rclickPosition, 8, Cesium.Color.RED, Cesium.Color.YELLOW, 3);
+     add_coordinate(rclickPosition, path, 100);
     }
     else
         {console.log("End point already set");}
 },Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+        
